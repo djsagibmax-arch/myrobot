@@ -37,7 +37,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--window-size=1920,1080")
 
 # সার্ভারের জন্য স্পেশাল সেটিংস
-driver = uc.Chrome(options=options, headless=True, use_subprocess=False)
+driver = uc.Chrome(options=options)
 
 try:
     print("মেসেঞ্জারে প্রবেশ করা হচ্ছে...")
