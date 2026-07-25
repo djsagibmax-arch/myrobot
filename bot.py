@@ -21,10 +21,9 @@ system_instruction = """
 model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=system_instruction)
 
 def human_typing(element, text):
-    """মানুষের মতো বিরতি দিয়ে টাইপ করার ফাংশন"""
     for char in text:
         element.send_keys(char)
-        time.sleep(random.uniform(0.1, 0.3)) # টাইপিং স্পিড আরেকটু স্লো করা হলো
+        time.sleep(random.uniform(0.1, 0.3)) 
 
 # ==========================================
 # ২. অ্যান্টি-ব্যান ব্রাউজার সেটআপ
@@ -57,19 +56,19 @@ try:
         driver.refresh()
         time.sleep(8)
     else:
-        print("প্রথমবার লগইন! মানুষের মতো টাইপ করে তথ্য দেওয়া হচ্ছে...")
+        print("প্রথমবার লগইন! সঠিক পাসওয়ার্ড দেওয়া হচ্ছে...")
         email_box = driver.find_element(By.ID, "email")
         pass_box = driver.find_element(By.ID, "pass")
 
         time.sleep(2)
-        # মানুষের মতো আস্তে আস্তে নাম্বার ও পাসওয়ার্ড টাইপ করবে
         human_typing(email_box, "01871337792")
         time.sleep(1)
-        human_typing(pass_box, "Sagibu02") # পাসওয়ার্ডের বানান ঠিক আছে কিনা খেয়াল রাখবেন
+        # এখানে ছোট হাতের 's' দিয়ে পাসওয়ার্ড আপডেট করা হয়েছে
+        human_typing(pass_box, "sagibu02") 
         time.sleep(2)
         
         pass_box.send_keys(Keys.RETURN)
-        time.sleep(12) # লগইন হওয়ার জন্য বেশি সময় দেওয়া হলো
+        time.sleep(15) 
 
         try:
             approvals_fields = driver.find_elements(By.ID, "approvals_code")
@@ -88,11 +87,9 @@ try:
 
     print("বট সফলভাবে চালু হয়েছে এবং মেসেজ চেক করা শুরু করেছে...")
     
-    # স্ক্রিনশট ডিবাগিং
     time.sleep(4)
     driver.save_screenshot("messenger_view.png")
-    print("🎯 বর্তমান স্ক্রিনের একটি ছবি 'messenger_view.png' নামে আপডেট করা হয়েছে!")
-
+    
     last_replied_text = ""
 
     # ==========================================
