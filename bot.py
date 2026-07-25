@@ -21,9 +21,10 @@ system_instruction = """
 model = genai.GenerativeModel('gemini-1.5-flash', system_instruction=system_instruction)
 
 def human_typing(element, text):
+    """মানুষের মতো বিরতি দিয়ে টাইপ করার ফাংশন"""
     for char in text:
         element.send_keys(char)
-        time.sleep(random.uniform(0.05, 0.2))
+        time.sleep(random.uniform(0.1, 0.3)) # টাইপিং স্পিড আরেকটু স্লো করা হলো
 
 # ==========================================
 # ২. অ্যান্টি-ব্যান ব্রাউজার সেটআপ
@@ -41,11 +42,8 @@ driver = uc.Chrome(options=options, headless=True, browser_executable_path='/usr
 try:
     print("মেসেঞ্জারে প্রবেশ করা হচ্ছে...")
     driver.get("https://www.messenger.com/")
-    time.sleep(5)
+    time.sleep(6)
 
-    # ==========================================
-    # ৩. কুকিজ ম্যানেজমেন্ট ও সিকিউর লগইন
-    # ==========================================
     cookies_file = "messenger_cookies.pkl"
 
     if os.path.exists(cookies_file):
@@ -57,23 +55,29 @@ try:
             except Exception:
                 pass
         driver.refresh()
-        time.sleep(8) # পেজ লোড হওয়ার জন্য একটু বেশি সময় দেওয়া হলো
+        time.sleep(8)
     else:
-        print("প্রথমবার লগইন! সুরক্ষিত উপায়ে তথ্য নেওয়া হচ্ছে...")
+        print("প্রথমবার লগইন! মানুষের মতো টাইপ করে তথ্য দেওয়া হচ্ছে...")
         email_box = driver.find_element(By.ID, "email")
         pass_box = driver.find_element(By.ID, "pass")
 
-        email_box.send_keys("01871337792")
-        pass_box.send_keys("Sagibu02")
+        time.sleep(2)
+        # মানুষের মতো আস্তে আস্তে নাম্বার ও পাসওয়ার্ড টাইপ করবে
+        human_typing(email_box, "01871337792")
+        time.sleep(1)
+        human_typing(pass_box, "Sagibu02") # পাসওয়ার্ডের বানান ঠিক আছে কিনা খেয়াল রাখবেন
+        time.sleep(2)
+        
         pass_box.send_keys(Keys.RETURN)
-        time.sleep(10)
+        time.sleep(12) # লগইন হওয়ার জন্য বেশি সময় দেওয়া হলো
 
         try:
             approvals_fields = driver.find_elements(By.ID, "approvals_code")
             if approvals_fields:
                 pin_code = input("ফেসবুক টু-ফ্যাক্টর কোড চাচ্ছে! আপনার নাম্বারে আসা কোডটি এখানে লিখুন: ")
                 pin_box = approvals_fields[0]
-                pin_box.send_keys(pin_code)
+                human_typing(pin_box, pin_code)
+                time.sleep(1)
                 pin_box.send_keys(Keys.RETURN)
                 time.sleep(10)
         except Exception as err:
@@ -84,14 +88,10 @@ try:
 
     print("বট সফলভাবে চালু হয়েছে এবং মেসেজ চেক করা শুরু করেছে...")
     
-    # ---------------------------------------------------------
-    # স্ক্রিনশট ডিবাগিং (বট কী দেখছে তা বোঝার জন্য)
-    # ---------------------------------------------------------
-    time.sleep(3)
+    # স্ক্রিনশট ডিবাগিং
+    time.sleep(4)
     driver.save_screenshot("messenger_view.png")
-    print("🎯 বট বর্তমানে কী দেখছে তার একটি ছবি 'messenger_view.png' নামে সেভ করা হয়েছে!")
-    print("বামদিকের ফাইল ম্যানেজার থেকে ছবিটি ওপেন করে দেখুন বট কোথায় আটকে আছে।")
-    # ---------------------------------------------------------
+    print("🎯 বর্তমান স্ক্রিনের একটি ছবি 'messenger_view.png' নামে আপডেট করা হয়েছে!")
 
     last_replied_text = ""
 
@@ -106,7 +106,6 @@ try:
             latest_message = messages[-1].text.strip()
             if latest_message and latest_message != last_replied_text:
                 print(f"কাস্টমার: {latest_message}")
-                print("জেমিনি উত্তর ভাবছে...")
                 
                 try:
                     response = model.generate_content(latest_message)
